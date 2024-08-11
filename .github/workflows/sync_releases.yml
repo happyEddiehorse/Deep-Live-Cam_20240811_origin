@@ -1,0 +1,83 @@
+name: Sync Releases
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-releases:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+
+      - name: Download releases from original repository
+        run: |
+          mkdir releases
+          cd releases
+          # 下载所有指定的文件
+          curl -L -o Deep-Live-Cam-cuda.z01 https://github.com/hacksider/Deep-Live-Cam/releases/download/cuda_deep-live-cam/Deep-Live-Cam-cuda.z01
+          curl -L -o Deep-Live-Cam-cuda.z02 https://github.com/hacksider/Deep-Live-Cam/releases/download/cuda_deep-live-cam/Deep-Live-Cam-cuda.z02
+          curl -L -o Deep-Live-Cam-cuda.z03 https://github.com/hacksider/Deep-Live-Cam/releases/download/cuda_deep-live-cam/Deep-Live-Cam-cuda.z03
+          curl -L -o Deep-Live-Cam-cuda.zip https://github.com/hacksider/Deep-Live-Cam/releases/download/cuda_deep-live-cam/Deep-Live-Cam-cuda.zip
+          curl -L -o cuda_deep-live-cam.zip https://github.com/hacksider/Deep-Live-Cam/archive/refs/tags/cuda_deep-live-cam.zip
+          curl -L -o cuda_deep-live-cam.tar.gz https://github.com/hacksider/Deep-Live-Cam/archive/refs/tags/cuda_deep-live-cam.tar.gz
+
+      - name: Create a new release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: cuda_deep-live-cam
+          release_name: "Deep Live Cam CUDA Release"
+          body: "This release contains CUDA files from the original repository."
+
+      - name: Upload release asset 1
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./releases/Deep-Live-Cam-cuda.z01
+          asset_name: Deep-Live-Cam-cuda.z01
+          asset_content_type: application/octet-stream
+
+      - name: Upload release asset 2
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./releases/Deep-Live-Cam-cuda.z02
+          asset_name: Deep-Live-Cam-cuda.z02
+          asset_content_type: application/octet-stream
+
+      - name: Upload release asset 3
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./releases/Deep-Live-Cam-cuda.z03
+          asset_name: Deep-Live-Cam-cuda.z03
+          asset_content_type: application/octet-stream
+
+      - name: Upload release asset 4
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./releases/Deep-Live-Cam-cuda.zip
+          asset_name: Deep-Live-Cam-cuda.zip
+          asset_content_type: application/zip
+
+      - name: Upload release asset 5
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./releases/cuda_deep-live-cam.zip
+          asset_name: cuda_deep-live-cam.zip
+          asset_content_type: application/zip
+
+      - name: Upload release asset 6
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./releases/cuda_deep-live-cam.tar.gz
+          asset_name: cuda_deep-live-cam.tar.gz
+          asset_content_type: application/gzip
